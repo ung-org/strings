@@ -101,6 +101,7 @@ int main(int argc, char *argv[])
 				fprintf(stderr, "strings: invalid format %s\n", optarg);
 				return 1;
 			}
+
 			switch (optarg[0]) {
 			case 'd':
 			case 'o':
@@ -111,6 +112,7 @@ int main(int argc, char *argv[])
 			default:
 				fprintf(stderr, "strings: invalid format %s\n", optarg);
 			}
+
 			format = optarg[0];
 			break;
 
