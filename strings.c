@@ -29,7 +29,7 @@
 #include <ctype.h>
 #include <unistd.h>
 
-static int strings(const char *path, int number, char format)
+static int strings(const char *path, size_t number, char format)
 {
 	FILE *f = stdin;
 	if (path && strcmp(path, "-")) {
@@ -40,43 +40,30 @@ static int strings(const char *path, int number, char format)
 		return 1;
 	}
 
-	char buf[BUFSIZ];
-	char tbuf[BUFSIZ];
-	int nread;
-	int offset = 0;
-	int i;
-	int count = 0;
+	size_t count = 0;
+	char string[number];
 
-	while (!feof(f)) {
-		nread = fread(buf, sizeof(char), BUFSIZ, f);
-		for (i = 0; i < nread; i++) {
-			if (buf[i] == '\0' || buf[i] == '\n') {
-				if (count >= number) {
-					switch (format) {
-					case 'd':
-						printf("%d ", offset - count);
-						break;
-					case 'o':
-						printf("%o ", offset - count);
-						break;
-					case 'x':
-						printf("%x ", offset - count);
-						break;
-					default:
-						break;
-					}
-					fwrite(tbuf, sizeof(char), count,
-					       stdout);
-					putchar('\n');
-				}
-				count = 0;
-			} else if (isprint(buf[i])) {
-				tbuf[count] = buf[i];
-				count++;
-			} else {
-				count = 0;
+	int c;
+	for (size_t offset = 0; (c = fgetc(f)) != EOF; offset++) {
+		if (!isprint(c)) {
+			if (count >= number) {
+				putchar('\n');
 			}
-			offset++;
+			count = 0;
+
+		} else if (count == number) {
+			if (format) {
+				char fmt[] = { '%', 'z', format, ' ', '\0' };
+				printf(fmt, offset - count);
+			}
+			fwrite(string, 1, number, stdout);
+			count++;
+
+		} else if (count > number) {
+			putchar(c);
+
+		} else {
+			string[count++] = c;
 		}
 	}
 
@@ -90,7 +77,7 @@ static int strings(const char *path, int number, char format)
 int main(int argc, char *argv[])
 {
 	int c;
-	int number = 4;
+	size_t number = 4;
 	char format = 0;
 	char *end;
 
@@ -102,8 +89,10 @@ int main(int argc, char *argv[])
 
 		case 'n':
 			number = strtol(optarg, &end, 10);
-			if (end != NULL && strlen(end) > 0)
+			if (end != NULL && strlen(end) > 0) {
+				fprintf(stderr, "strings: invalid number %s\n", optarg);
 				return 1;
+			}
 			break;
 
 		case 't':
