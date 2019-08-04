@@ -23,10 +23,12 @@
  */
 
 #define _POSIX_C_SOURCE 2
+#include <ctype.h>
+#include <errno.h>
 #include <locale.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <ctype.h>
+#include <string.h>
 #include <unistd.h>
 
 static int strings(const char *path, size_t number, char format)
@@ -37,6 +39,7 @@ static int strings(const char *path, size_t number, char format)
 	}
 
 	if (f == NULL) {
+		fprintf(stderr, "strings: %s: %s\n", path, strerror(errno));
 		return 1;
 	}
 
