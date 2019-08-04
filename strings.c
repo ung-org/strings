@@ -133,7 +133,7 @@ int main(int argc, char *argv[])
 
 	do {
 		ret |= strings(argv[optind], number, format);
-	} while (optind++ < argc);
+	} while (++optind < argc);
 
 	return 0;
 }
