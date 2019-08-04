@@ -25,14 +25,13 @@
 #define _POSIX_C_SOURCE 2
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <ctype.h>
 #include <unistd.h>
 
 static int strings(const char *path, size_t number, char format)
 {
 	FILE *f = stdin;
-	if (path && strcmp(path, "-")) {
+	if (path) {
 		f = fopen(path, "rb");
 	}
 
@@ -89,14 +88,14 @@ int main(int argc, char *argv[])
 
 		case 'n':
 			number = strtol(optarg, &end, 10);
-			if (end != NULL && strlen(end) > 0) {
+			if (*end != '\0') {
 				fprintf(stderr, "strings: invalid number %s\n", optarg);
 				return 1;
 			}
 			break;
 
 		case 't':
-			if (strlen(optarg) != 1) {
+			if (optarg[1] != '\0') {
 				fprintf(stderr, "strings: invalid format %s\n", optarg);
 				return 1;
 			}
