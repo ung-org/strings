@@ -50,20 +50,19 @@ static int strings(const char *path, size_t number, char format)
 				putchar('\n');
 			}
 			count = 0;
+		} else if (count > number) {
+			putchar(c);
+		} else if (count < number) {
+			string[count++] = c;
+		}
 
-		} else if (count == number) {
+		if (count == number) {
 			if (format) {
 				char fmt[] = { '%', 'z', format, ' ', '\0' };
-				printf(fmt, offset - count);
+				printf(fmt, offset - count + 1);
 			}
 			fwrite(string, 1, number, stdout);
 			count++;
-
-		} else if (count > number) {
-			putchar(c);
-
-		} else {
-			string[count++] = c;
 		}
 	}
 
