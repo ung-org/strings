@@ -114,6 +114,7 @@ int main(int argc, char *argv[])
 
 			default:
 				fprintf(stderr, "strings: invalid format %s\n", optarg);
+				return 1;
 			}
 
 			format = optarg[0];
