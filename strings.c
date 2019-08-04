@@ -23,6 +23,7 @@
  */
 
 #define _POSIX_C_SOURCE 2
+#include <locale.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -75,6 +76,8 @@ static int strings(const char *path, size_t number, char format)
 
 int main(int argc, char *argv[])
 {
+	setlocale(LC_ALL, "");
+
 	int c;
 	size_t number = 4;
 	char format = 0;
