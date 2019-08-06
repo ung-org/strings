@@ -76,6 +76,35 @@ static int strings(const char *path, size_t number, char format)
 	return 0;
 }
 
+static void fixobsolete(int argc, char *argv[])
+{
+	for (int i = 1; i < argc; i++) {
+		if (argv[i][0] != '-') {
+			return;
+		}
+
+		if (!strcmp(argv[i], "--")) {
+			return;
+		}
+
+		if (!strcmp(argv[i], "-")) {
+			fprintf(stderr, "strings: '-' is obsolete; use '-a'\n");
+			argv[i] = "-a";
+		}
+
+		if (isdigit(argv[i][1])) {
+			fprintf(stderr, "strings: '-#' is obsolete; use '-n #'\n");
+			char *opt = malloc(strlen(argv[i]) + 2);
+			if (opt == NULL) {
+				perror("strings");
+				exit(1);
+			}
+			sprintf(opt, "-n %s", argv[i] + 1);
+			argv[i] = opt;
+		}
+	}
+}
+
 int main(int argc, char *argv[])
 {
 	setlocale(LC_ALL, "");
@@ -85,6 +114,7 @@ int main(int argc, char *argv[])
 	char format = 0;
 	char *end;
 
+	fixobsolete(argc, argv);
 	while ((c = getopt(argc, argv, "an:t:")) != -1) {
 		switch (c) {
 		case 'a':
